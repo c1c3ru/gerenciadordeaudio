@@ -4,13 +4,22 @@ Um gerenciador de audios com Bloc e modular
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+# Gerenciador de Áudios em Flutter
 
-A few resources to get you started if this is your first Flutter project:
+Este é um aplicativo Flutter para gerenciar e reproduzir áudios. Ele demonstra o uso de BLoC para gerenciar o estado da reprodução de áudio e o uso de uma lista de áudios.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Funcionalidades
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Lista de áudios disponíveis para reprodução.
+- Controles de reprodução para tocar e pausar áudios.
+
+## Como Executar
+
+Para executar este aplicativo, siga os passos abaixo:
+
+1. Certifique-se de ter o Flutter instalado em sua máquina. Se não, siga as [instruções de instalação do Flutter](https://flutter.dev/docs/get-started/install).
+
+2. Clone este repositório:
+
+   ```bash
+   git clone https://github.com/seu-usuario/seu-repositorio.git

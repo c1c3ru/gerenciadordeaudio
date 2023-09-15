@@ -1,4 +1,3 @@
-import 'package:audioplayers_platform_interface/src/api/audio_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/audio_bloc.dart';
@@ -14,22 +13,26 @@ class AudioPlayerControls extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (state.isPlaying)
-              IconButton(
-                icon: Icon(Icons.pause),
-                onPressed: () {
-                  context.read<AudioBloc>().add(PauseAudio());
-                },
+              GestureDetector(
+                child: IconButton(
+                  icon: Icon(Icons.pause),
+                  onPressed: () {
+                    context.read<AudioBloc>().add(PauseAudio());
+                  },
+                ),
               )
             else
-              IconButton(
-                icon: Icon(Icons.play_arrow),
-                onPressed: () {
-                  if (state.currentAudio != null) {
-                    context.read<AudioBloc>().add(
-                      PlayAudio(state.currentAudio!.title, state.currentAudio!.url),
-                    );
-                  }
-                },
+              GestureDetector(
+                child: IconButton(
+                  icon: Icon(Icons.play_arrow),
+                  onPressed: () {
+                    if (state.currentAudio != null) {
+                      context.read<AudioBloc>().add(
+                        PlayAudio(state.currentAudio!.title, state.currentAudio!.url),
+                      );
+                    }
+                  },
+                ),
               ),
           ],
         );
