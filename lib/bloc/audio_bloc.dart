@@ -1,27 +1,37 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:audioplayers/audioplayers.dart';
 import '../models/audio.dart';
+import '../widgets/audio_manager_bloc.dart';
 import 'audio_event.dart';
 import 'audio_state.dart';
 
 class AudioBloc extends Bloc<AudioEventBloc, AudioState> {
-  final AudioPlayer _audioPlayer = AudioPlayer();
-
   AudioBloc() : super(AudioState.initial()) {
     on<PlayAudio>(_onPlayAudio);
+    on<PauseAudio>(_onPauseAudio);
+    on<StopAudio>(_onStopAudio);  // Adicionando tratamento para StopAudio
   }
 
   Future<void> _onPlayAudio(PlayAudio event, Emitter<AudioState> emit) async {
-    await _audioPlayer.stop();
-    await _audioPlayer.play(event.audioUrl as Source);
-    emit(state.copyWith(currentAudio: Audio(title: "", url: event.audioUrl), isPlaying: true));
+    await AudioManager.play(event.audioUrl as Audio);
+    emit(state.copyWith(
+        currentAudio: Audio(title: event.title, url: event.audioUrl),
+        isPlaying: true));
+  }
+
+  Future<void> _onPauseAudio(PauseAudio event, Emitter<AudioState> emit) async {
+    await AudioManager.pause();
+    emit(state.copyWith(isPlaying: false));
+  }
+
+  Future<void> _onStopAudio(StopAudio event, Emitter<AudioState> emit) async {
+    await  StopAudio();  // Parando a reprodução
+    emit(state.copyWith(isPlaying: false));
   }
 
   Stream<AudioState> mapEventToState(AudioEventBloc event) async* {
     if (event is PauseAudio) {
-      await _audioPlayer.pause();
+      await PauseAudio();
       yield state.copyWith(isPlaying: false);
     }
   }

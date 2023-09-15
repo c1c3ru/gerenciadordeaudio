@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/audio_bloc.dart';
 import '../bloc/audio_event.dart';
-import '../bloc/audio_state.dart'; // Import audio events
+import '../bloc/audio_state.dart';
 
 class AudioPlayerControls extends StatelessWidget {
   @override
@@ -13,27 +13,49 @@ class AudioPlayerControls extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (state.isPlaying)
-              GestureDetector(
-                child: IconButton(
-                  icon: Icon(Icons.pause),
-                  onPressed: () {
-                    context.read<AudioBloc>().add(PauseAudio());
-                  },
-                ),
-              )
-            else
-              GestureDetector(
-                child: IconButton(
-                  icon: Icon(Icons.play_arrow),
-                  onPressed: () {
-                    if (state.currentAudio != null) {
-                      context.read<AudioBloc>().add(
-                        PlayAudio(state.currentAudio!.title, state.currentAudio!.url),
-                      );
-                    }
-                  },
-                ),
+              IconButton(
+                icon: Icon(Icons.pause),
+                onPressed: () {
+                  context.read<AudioBloc>().add(PauseAudio());
+                },
               ),
+            if (!state.isPlaying && state.currentAudio != null)
+              IconButton(
+                icon: Icon(Icons.play_arrow),
+                onPressed: () {
+                  context.read<AudioBloc>().add(
+                    PlayAudio(
+                      state.currentAudio!.url,
+                      state.currentAudio!.title,
+                    ),
+                  );
+                },
+              ),
+            IconButton(
+              icon: Icon(Icons.play_arrow),
+              onPressed: () {
+                if (state.currentAudio != null) {
+                  context.read<AudioBloc>().add(
+                    PlayAudio(
+                      state.currentAudio!.url,
+                      state.currentAudio!.title,
+                    ),
+                  );
+                }
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.pause), // Ícone de pausar
+              onPressed: () {
+                context.read<AudioBloc>().add(PauseAudio());
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.stop), // Ícone de parar
+              onPressed: () {
+                context.read<AudioBloc>().add(StopAudio());
+              },
+            ),
           ],
         );
       },
