@@ -1,10 +1,9 @@
-// audio_state.dart
-
 import 'package:equatable/equatable.dart';
+
 import '../models/audio.dart';
 
 class AudioState extends Equatable {
-  final Audio? currentAudio;
+  final AudioModel? currentAudio;
   final bool isPlaying;
 
   AudioState({required this.currentAudio, required this.isPlaying});
@@ -13,7 +12,7 @@ class AudioState extends Equatable {
     return AudioState(currentAudio: null, isPlaying: false);
   }
 
-  AudioState copyWith({Audio? currentAudio, bool? isPlaying}) {
+  AudioState copyWith({AudioModel? currentAudio, bool? isPlaying}) {
     return AudioState(
       currentAudio: currentAudio ?? this.currentAudio,
       isPlaying: isPlaying ?? this.isPlaying,

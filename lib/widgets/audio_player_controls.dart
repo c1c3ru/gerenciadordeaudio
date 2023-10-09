@@ -12,46 +12,15 @@ class AudioPlayerControls extends StatelessWidget {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (state.isPlaying)
-              IconButton(
-                icon: Icon(Icons.pause),
-                onPressed: () {
-                  context.read<AudioBloc>().add(PauseAudio());
-                },
-              ),
-            if (!state.isPlaying && state.currentAudio != null)
-              IconButton(
-                icon: Icon(Icons.play_arrow),
-                onPressed: () {
-                  context.read<AudioBloc>().add(
-                    PlayAudio(
-                      state.currentAudio!.url,
-                      state.currentAudio!.title,
-                    ),
-                  );
-                },
-              ),
             IconButton(
-              icon: Icon(Icons.play_arrow),
-              onPressed: () {
-                if (state.currentAudio != null) {
-                  context.read<AudioBloc>().add(
-                    PlayAudio(
-                      state.currentAudio!.url,
-                      state.currentAudio!.title,
-                    ),
-                  );
-                }
+              icon:
+                  state.isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+              onPressed: () async {
+                context.read<AudioBloc>().add(ToggleAudio());
               },
             ),
             IconButton(
-              icon: Icon(Icons.pause), // Ícone de pausar
-              onPressed: () {
-                context.read<AudioBloc>().add(PauseAudio());
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.stop), // Ícone de parar
+              icon: Icon(Icons.stop),
               onPressed: () {
                 context.read<AudioBloc>().add(StopAudio());
               },

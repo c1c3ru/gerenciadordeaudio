@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/audio.dart';
 
 class AudioList extends StatelessWidget {
-  final List<Audio> audios;
-  final Function(Audio) onAudioSelected;
+  final List<AudioModel> audios;
+  final Function(AudioModel) onAudioSelected;
 
   AudioList({required this.audios, required this.onAudioSelected});
 
@@ -14,7 +14,9 @@ class AudioList extends StatelessWidget {
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(audios[index].title),
-          onTap: () => onAudioSelected(audios[index]),
+          onTap: () {
+            onAudioSelected(audios[index]);
+          },
         );
       },
     );

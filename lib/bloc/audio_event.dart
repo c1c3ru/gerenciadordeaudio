@@ -1,20 +1,20 @@
 import 'package:equatable/equatable.dart';
 
-abstract class AudioEventBloc extends Equatable {
+abstract class AudioEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class PlayAudio extends AudioEventBloc {
-  final String audioUrl;
+class PlayAudio extends AudioEvent {
+  final String asset;
   final String title;
 
-  PlayAudio(this.audioUrl, this.title);
+  PlayAudio(this.asset, this.title);
 
   @override
-  List<Object?> get props => [audioUrl];
+  List<Object?> get props => [asset];
 }
 
-class PauseAudio extends AudioEventBloc {}
+class ToggleAudio extends AudioEvent {}
 
-class StopAudio extends AudioEventBloc {}
+class StopAudio extends AudioEvent {}

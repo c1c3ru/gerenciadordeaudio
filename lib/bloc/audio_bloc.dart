@@ -1,38 +1,94 @@
-import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:assets_audio_player/assets_audio_player.dart';
 import '../models/audio.dart';
-import '../widgets/audio_manager_bloc.dart';
 import 'audio_event.dart';
 import 'audio_state.dart';
 
-class AudioBloc extends Bloc<AudioEventBloc, AudioState> {
+class AudioBloc extends Bloc<AudioEvent, AudioState> {
+  final AssetsAudioPlayer _audioPlayer = AssetsAudioPlayer();
+  List<AudioModel> audioList = [];
+
   AudioBloc() : super(AudioState.initial()) {
+    _audioPlayer.playlistFinished.listen((event) {
+      add(StopAudio());
+    });
+
+    on<ToggleAudio>(_onToggleAudio);
+    on<StopAudio>((event, emit) {
+      _audioPlayer.stop();
+    });
     on<PlayAudio>(_onPlayAudio);
-    on<PauseAudio>(_onPauseAudio);
-    on<StopAudio>(_onStopAudio);  // Adicionando tratamento para StopAudio
   }
 
-  Future<void> _onPlayAudio(PlayAudio event, Emitter<AudioState> emit) async {
-    await AudioManager.play(event.audioUrl as Audio);
+  void _onPlayAudio(PlayAudio event, Emitter<AudioState> emit) async {
+    // Supondo que você deseja limpar a lista de reprodução e adicionar a nova música a cada reprodução
+    audioList.clear();
+    audioList.add(AudioModel(title: event.title, asset: event.asset));
+
+    await _audioPlayer.open(
+      Playlist(
+        audios: audioList.map((audioModel) {
+          return Audio.file(
+            audioModel.asset, // Use audioModel.asset como o caminho do arquivo
+            metas: Metas(
+              title: audioModel.title,
+            ),
+          );
+        }).toList(),
+      ),
+      showNotification: true,
+      headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
+    );
+
+    await _audioPlayer.play();
+
     emit(state.copyWith(
-        currentAudio: Audio(title: event.title, url: event.audioUrl),
-        isPlaying: true));
+      currentAudio: AudioModel(title: event.title, asset: event.asset),
+      isPlaying: true,
+    ));
   }
 
-  Future<void> _onPauseAudio(PauseAudio event, Emitter<AudioState> emit) async {
-    await AudioManager.pause();
-    emit(state.copyWith(isPlaying: false));
-  }
+  Stream<AudioState> _mapPlayAudioToState(PlayAudio event) async* {
+    audioList.clear();
+    audioList.add(AudioModel(title: event.title, asset: event.asset));
 
-  Future<void> _onStopAudio(StopAudio event, Emitter<AudioState> emit) async {
-    await  StopAudio();  // Parando a reprodução
-    emit(state.copyWith(isPlaying: false));
-  }
+    await _audioPlayer.open(
+      Playlist(
+        audios: audioList.map((audioModel) {
+          return Audio.file(audioModel.asset);
+        }).toList(),
+      ),
+      showNotification: true,
+      headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplugPlayOnPlug,
+    );
 
-  Stream<AudioState> mapEventToState(AudioEventBloc event) async* {
-    if (event is PauseAudio) {
-      await PauseAudio();
-      yield state.copyWith(isPlaying: false);
+    await _audioPlayer.play();
+
+    yield state.copyWith(
+      currentAudio: AudioModel(title: event.title, asset: event.asset),
+      isPlaying: true,
+    );
+  }
+  void _onToggleAudio(ToggleAudio event, Emitter<AudioState> emit) async {
+    if (state.isPlaying) {
+      await _audioPlayer.pause();
+    } else {
+      await _audioPlayer.play();
     }
+    emit(state.copyWith(isPlaying: !state.isPlaying));
+  }
+
+  Stream<AudioState> mapEventToState(AudioEvent event) async* {
+    if (event is PlayAudio) {
+      yield* _mapPlayAudioToState(event);
+    } else if (event is StopAudio) {
+      yield* _mapStopAudioToState();
+    }
+  }
+
+
+  Stream<AudioState> _mapStopAudioToState() async* {
+    await _audioPlayer.stop();
+    yield state.copyWith(isPlaying: false);
   }
 }
